@@ -64,11 +64,20 @@ function create_user() {
     chown "${user_name}" "/home/${user_name}"
 }
 
+function allow_wheel_sudo() {
+    local wheel
+    local wheel_new
+    wheel='#%wheel ALL=(ALL) ALL'
+    wheel_new='%wheel ALL=(ALL) ALL'
+
+    grep -q -E ".*${wheel_new}" '/etc/sudoers' && sed -i -E "s,.*${wheel}.*,${wheel_new}," '/etc/sudoers' || printf '%s\n' "${wheel_new}" >>'/etc/sudoers'
+}
+
 function add_user_to_sudo() {
     # Parameters
     local user_name=${1}
 
-    grep -q -E ".*${user_name}" '/etc/sudoers' && sed -i -E "s,.*${user_name}.*,${user_name} ALL=\(ALL\) ALL," '/etc/sudoers' || printf '%s\n' "${user_name} ALL=(ALL) ALL" >>'/etc/sudoers'
+    usermod -G wheel "${user_name}"
 }
 
 function set_shell_bash() {
@@ -77,4 +86,18 @@ function set_shell_bash() {
 
     chsh -s /bin/bash
     chsh -s /bin/bash "${user_name}"
+}
+
+function get_linux_headers() {
+    linux_headers="linux-headers-$(uname -r)"
+}
+
+function add_backports_repository() {
+    # Parameters
+    local release_name=${1}
+
+    cat <<EOF >>'/etc/apt/sources.list'
+deb https://mirrors.wikimedia.org/debian/ ${release_name}-backports main
+deb-src https://mirrors.wikimedia.org/debian/ ${release_name}-backports main
+EOF
 }

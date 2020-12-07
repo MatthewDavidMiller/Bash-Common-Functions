@@ -27,3 +27,8 @@ function iptables_set_defaults() {
     iptables-save >/etc/iptables/rules.v4
     ip6tables-save >/etc/iptables/rules.v6
 }
+
+function iptables_allow_forwarding() {
+    grep -q -E ".*net\.ipv4\.ip_forward=" '/etc/sysctl.conf' && sed -i -E "s,.*net\.ipv4\.ip_forward=.*,net.ipv4.ip_forward=1," '/etc/sysctl.conf' || printf '%s\n' 'net.ipv4.ip_forward=1' >>'/etc/sysctl.conf'
+    grep -q -E ".*net\.ipv6\.conf\.all\.forwarding=" '/etc/sysctl.conf' && sed -i -E "s,.*net\.ipv6\.conf\.all\.forwarding=.*,net.ipv6.conf.all.forwarding=1," '/etc/sysctl.conf' || printf '%s\n' 'net.ipv6.conf.all.forwarding=1' >>'/etc/sysctl.conf'
+}

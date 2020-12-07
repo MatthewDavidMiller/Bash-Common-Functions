@@ -97,3 +97,30 @@ function iptables_allow_loopback() {
     iptables-save >/etc/iptables/rules.v4
     ip6tables-save >/etc/iptables/rules.v6
 }
+
+function iptables_allow_vpn_port() {
+    # Parameters
+    local interface=${1}
+    local vpn_port=${2}
+
+    # Allow vpn port to a destination
+    iptables -A INPUT -p udp --dport ${vpn_port} -i "${interface}" -j ACCEPT
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -i "${interface}" -j ACCEPT
+
+    # Log new connection ips and add them to a list called Wireguard
+    iptables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --set --name Wireguard
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --set --name Wireguard
+
+    # Log vpn connections from an ip to 3 connections in 60 seconds.
+    iptables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j LOG --log-level info --log-prefix "Limit Wireguard"
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j LOG --log-level info --log-prefix "Limit Wireguard"
+
+    # Limit vpn connections from an ip to 3 connections in 60 seconds.
+    iptables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j DROP
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j DROP
+
+    # Save rules
+    iptables-save >/etc/iptables/rules.v4
+    ip6tables-save >/etc/iptables/rules.v6
+
+}
