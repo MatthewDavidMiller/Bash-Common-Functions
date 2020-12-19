@@ -73,11 +73,18 @@ function allow_wheel_sudo() {
     grep -q -E ".*${wheel_new}" '/etc/sudoers' && sed -i -E "s,.*${wheel}.*,${wheel_new}," '/etc/sudoers' || printf '%s\n' "${wheel_new}" >>'/etc/sudoers'
 }
 
-function add_user_to_sudo() {
+function add_user_to_wheel_group() {
     # Parameters
     local user_name=${1}
 
     usermod -G wheel "${user_name}"
+}
+
+function add_user_to_sudo_group() {
+    # Parameters
+    local user_name=${1}
+
+    usermod -G sudo "${user_name}"
 }
 
 function set_shell_bash() {
