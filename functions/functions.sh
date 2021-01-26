@@ -108,3 +108,20 @@ deb https://mirrors.wikimedia.org/debian/ ${release_name}-backports main
 deb-src https://mirrors.wikimedia.org/debian/ ${release_name}-backports main
 EOF
 }
+
+function configure_ddclient() {
+    local domain_name=${1}
+    local user_name
+    local password
+
+    read -r -p "Enter dynamic dns username: " user_name
+    read -r -p "Enter dynamic dns password: " password
+
+    grep -q -E ".*protocol=dyndns2" '/etc/ddclient.conf' && sed -i -E "s,.*protocol=.*,protocol=dyndns2," '/etc/ddclient.conf' || printf '%s\n' 'protocol=dyndns2' >>'/etc/ddclient.conf'
+    grep -q -E ".*use=web" '/etc/ddclient.conf' && sed -i -E "s,.*use=.*,use=web," '/etc/ddclient.conf' || printf '%s\n' 'use=web' >>'/etc/ddclient.conf'
+    grep -q -E ".*server=domains\.google\.com" '/etc/ddclient.conf' && sed -i -E "s,.*server=.*,server=domains.google.com," '/etc/ddclient.conf' || printf '%s\n' 'server=domains.google.com' >>'/etc/ddclient.conf'
+    grep -q -E ".*ssl=yes" '/etc/ddclient.conf' && sed -i -E "s,.*ssl=.*,ssl=yes," '/etc/ddclient.conf' || printf '%s\n' 'ssl=yes' >>'/etc/ddclient.conf'
+    grep -q -E ".*login=${user_name}" '/etc/ddclient.conf' && sed -i -E "s,.*login=.*,login=${user_name}," '/etc/ddclient.conf' || printf '%s\n' "login=${user_name}" >>'/etc/ddclient.conf'
+    grep -q -E ".*password=${password}" '/etc/ddclient.conf' && sed -i -E "s,.*password=.*,password=${password}," '/etc/ddclient.conf' || printf '%s\n' "password=${password}" >>'/etc/ddclient.conf'
+    grep -q -E ".*${domain_name}" '/etc/ddclient.conf' || printf '%s\n' "${domain_name}" >>'/etc/ddclient.conf'
+}
