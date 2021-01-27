@@ -21,7 +21,7 @@ function generate_ssh_key() {
     fi
 
     # Authorize the key for use with ssh
-    mkdir "/home/$user_name/.ssh"
+    mkdir -p "/home/$user_name/.ssh"
     chmod 700 "/home/$user_name/.ssh"
     touch "/home/$user_name/.ssh/authorized_keys"
     chmod 600 "/home/$user_name/.ssh/authorized_keys"
