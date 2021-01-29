@@ -81,6 +81,3 @@ def configure_ssh():
                 break
         else:
             opened_file.write('PubkeyAuthentication yes' + '\n')
-
-
-configure_ssh()
