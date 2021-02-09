@@ -13,19 +13,22 @@ import re
 
 def apt_configure_auto_updates(release_name):
 
-    update_regex = r'Unattended-Upgrade::Origins-Pattern {' + '.*' + r'};'
+    update_regex = str(r'Unattended-Upgrade::Origins-Pattern {.*};')
 
-    update_replace = r'Unattended-Upgrade::Origins-Pattern {' + '\n' + r'"origin=Debian,n=' + re.escape(release_name) + r',l = Debian";' + '\n' + r'"origin=Debian,n=' + \
-        re.escape(release_name) + r',l = Debian-Security";' '\n' r'"origin=Debian,n=' + \
-        re.escape(release_name) + r'-updates";' + '\n' + r'};' + '\n'
+    update_replace = str(r'Unattended-Upgrade::Origins-Pattern {' + '\n' + r'"origin=Debian,n=' + release_name + r',l = Debian";' + '\n' +
+                         r'"origin=Debian,n=' + release_name + r',l = Debian-Security";' '\n' r'"origin=Debian,n=' +
+                         release_name + r'-updates";' + '\n' + r'};')
 
-    reboot_regex = '.*' + r'Unattended-Upgrade::Automatic-Reboot' + '.*'
+    reboot_regex = str(r'.*Unattended-Upgrade::Automatic-Reboot.*')
 
-    reboot_replace = r'Unattended-Upgrade::Automatic-Reboot "true";' + '\n'
+    reboot_replace = str(
+        r'Unattended-Upgrade::Automatic-Reboot "true";')
 
-    reboot_time_regex = '.*' + r'Unattended-Upgrade::Automatic-Reboot-Time' + '.*'
+    reboot_time_regex = str(
+        r'.*Unattended-Upgrade::Automatic-Reboot-Time.*')
 
-    reboot_time_replace = r'Unattended-Upgrade::Automatic-Reboot-Time "04:00";' + '\n'
+    reboot_time_replace = str(
+        r'Unattended-Upgrade::Automatic-Reboot-Time "04:00";')
 
     # Enable autoupdates
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "r") as opened_file:
@@ -39,31 +42,31 @@ def apt_configure_auto_updates(release_name):
             if (update_replace) == line.strip():
                 break
             else:
-                opened_file.write(update_replace)
+                opened_file.write(update_replace + '\n')
 
     # Allow reboots
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "r") as opened_file:
         lines = opened_file.readlines()
 
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "w") as opened_file:
-        for line2 in lines:
-            opened_file.write(re.sub(reboot_regex, reboot_replace, line2))
+        for line in lines:
+            opened_file.write(re.sub(reboot_regex, reboot_replace, line))
 
             if (reboot_replace) == line.strip():
                 break
             else:
-                opened_file.write(reboot_replace)
+                opened_file.write(reboot_replace + '\n')
 
     # Set reboot time
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "r") as opened_file:
         lines = opened_file.readlines()
 
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "w") as opened_file:
-        for line3 in lines:
+        for line in lines:
             opened_file.write(
-                re.sub(reboot_time_regex, reboot_time_replace, line3))
+                re.sub(reboot_time_regex, reboot_time_replace, line))
 
             if (reboot_time_replace) == line.strip():
                 break
             else:
-                opened_file.write(reboot_time_replace)
+                opened_file.write(reboot_time_replace + '\n')

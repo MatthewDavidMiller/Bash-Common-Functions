@@ -11,18 +11,24 @@ import re
 
 
 def configure_ssh():
+
+    password_authentication_regex = str(
+        '.*' + r'PasswordAuthentication' + '.*')
+
+    password_authentication_replace = str(r'PasswordAuthentication no')
+
     # Turn off password authentication
     with open('/etc/ssh/sshd_config', "r") as opened_file:
         lines = opened_file.readlines()
 
     with open('/etc/ssh/sshd_config', "w") as opened_file:
         for line in lines:
-            opened_file.write(re.sub(".*PasswordAuthentication.*",
-                                     "PasswordAuthentication no", line))
-            if 'PasswordAuthentication no' == line.strip():
+            opened_file.write(
+                re.sub(password_authentication_regex, password_authentication_replace, line))
+            if password_authentication_replace == line.strip():
                 break
         else:
-            opened_file.write('PasswordAuthentication no' + '\n')
+            opened_file.write(password_authentication_replace + '\n')
 
 # Do not allow empty passwords
     with open('/etc/ssh/sshd_config', "r") as opened_file:
