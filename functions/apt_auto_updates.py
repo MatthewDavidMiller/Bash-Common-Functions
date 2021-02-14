@@ -16,7 +16,7 @@ def apt_configure_auto_updates(release_name, origin_name):
     update_regex = str(r'Unattended-Upgrade::Origins-Pattern {' + '.*' + r'};')
 
     update_replace = str(r'Unattended-Upgrade::Origins-Pattern {' + '\n' + r'"origin=' + origin_name + r',n=' + release_name + r',l = Debian";' + '\n' +
-                         r'"origin=' + origin_name + r',n=' + release_name + r',l = Debian-Security";' '\n' r'"origin=Debian,n=' +
+                         r'"origin=' + origin_name + r',n=' + release_name + r',l = Debian-Security";' '\n' r'"origin=' + origin_name + r',n=' +
                          release_name + r'-updates";' + '\n' + r'};')
 
     reboot_regex = str('.*' + r'Unattended-Upgrade::Automatic-Reboot' + '.*')
