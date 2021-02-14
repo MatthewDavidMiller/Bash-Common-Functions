@@ -88,3 +88,42 @@ def iptables_allow_icmp(source, interface, ipv6_link_local):
     # Save rules
     subprocess.run(['iptables-save']) > '/etc/iptables/rules.v4'
     subprocess.run(['ip6tables-save']) > '/etc/iptables/rules.v6'
+
+
+def iptables_allow_loopback():
+
+    subprocess.run(['iptables', '-A', 'INPUT', '-s',
+                    '127.0.0.0/8', '-i', 'lo', '-j', 'ACCEPT'])
+    subprocess.run(['ip6tables', '-A', 'INPUT', '-s',
+                    '::1', '-i', 'lo', '-j', 'ACCEPT'])
+
+    # Save rules
+    subprocess.run(['iptables-save']) > '/etc/iptables/rules.v4'
+    subprocess.run(['ip6tables-save']) > '/etc/iptables/rules.v6'
+
+
+def iptables_allow_vpn_port(interface, vpn_port):
+
+    # Allow vpn port to a destination
+    subprocess.run(['iptables', '-A', 'INPUT', '-p', 'udp',
+                    '--dport', vpn_port, '-i', interface, '-j', 'ACCEPT'])
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -i "${interface}" -j ACCEPT
+
+    # Log new connection ips and add them to a list called Wireguard
+    subprocess.run(['iptables', '-A', 'INPUT', '-p', 'udp', '--dport', vpn_port, '-m',
+                    'state', '--state', 'NEW', '-m', 'recent', '--set', '--name', 'Wireguard'])
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --set --name Wireguard
+
+    # Log vpn connections from an ip to 3 connections in 60 seconds.
+    subprocess.run(['iptables', '-A', 'INPUT', '-p', 'udp', '--dport', vpn_port, '-m', 'state', '--state', 'NEW', '-m', 'recent', '--update',
+                    '--seconds', '60', '--hitcount', '3', '--rttl', '--name', 'Wireguard', '-j', 'LOG', '--log-level', 'info', '--log-prefix', 'Limit Wireguard'])
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j LOG --log-level info --log-prefix "Limit Wireguard"
+
+    # Limit vpn connections from an ip to 3 connections in 60 seconds.
+    subprocess.run(['iptables', '-A', 'INPUT', '-p', 'udp', '--dport', vpn_port, '-m', 'state', '--state', 'NEW', '-m',
+                    'recent', '--update', '--seconds', '60', '--hitcount', '3', '--rttl', '--name', 'Wireguard', '-j', 'DROP'])
+    # ip6tables -A INPUT -p udp --dport ${vpn_port} -m state --state NEW -m recent --update --seconds 60 --hitcount 3 --rttl --name Wireguard -j DROP
+
+    # Save rules
+    subprocess.run(['iptables-save']) > '/etc/iptables/rules.v4'
+    subprocess.run(['ip6tables-save']) > '/etc/iptables/rules.v6'
