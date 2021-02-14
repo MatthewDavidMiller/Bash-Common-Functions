@@ -11,7 +11,7 @@ import shutil
 
 def log_rotate_configure(user_name):
 
-    subprocess.run(['apt-get', 'install', '-y', 'logrotate'])
+    subprocess.call(['apt-get', 'install', '-y', 'logrotate'])
 
     with open('/etc/logrotate.conf', "w") as opened_file:
         pass

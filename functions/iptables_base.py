@@ -5,33 +5,39 @@ import re
 def iptables_setup_base():
 
     # Allow established connections
-    subprocess.run(['iptables', '-A', 'INPUT', '-m', 'conntrack',
-                    '--ctstate', 'ESTABLISHED,RELATED', '-j', 'ACCEPT'])
-    subprocess.run(['ip6tables', '-A', 'INPUT', '-m', 'conntrack',
-                    '--ctstate', 'ESTABLISHED,RELATED', '-j', 'ACCEPT'])
+    subprocess.call(['iptables', '-A', 'INPUT', '-m', 'conntrack',
+                     '--ctstate', 'ESTABLISHED,RELATED', '-j', 'ACCEPT'])
+    subprocess.call(['ip6tables', '-A', 'INPUT', '-m', 'conntrack',
+                     '--ctstate', 'ESTABLISHED,RELATED', '-j', 'ACCEPT'])
 
     # Save rules
-    subprocess.run(['iptables-save']) > '/etc/iptables/rules.v4'
-    subprocess.run(['ip6tables-save']) > '/etc/iptables/rules.v6'
+    with open('/etc/iptables/rules.v4', "w") as opened_file:
+        subprocess.call(['iptables-save'], stdout=opened_file)
+
+    with open('/etc/iptables/rules.v6', "w") as opened_file:
+        subprocess.call(['ip6tables-save'], stdout=opened_file)
 
 
 def iptables_set_defaults():
 
     # Drop inbound by default
-    subprocess.run(['iptables', '-P', 'INPUT', 'DROP'])
-    subprocess.run(['ip6tables', '-P', 'INPUT', 'DROP'])
+    subprocess.call(['iptables', '-P', 'INPUT', 'DROP'])
+    subprocess.call(['ip6tables', '-P', 'INPUT', 'DROP'])
 
     # Allow outbound by default
-    subprocess.run(['iptables', '-P', 'OUTPUT', 'ACCEPT'])
-    subprocess.run(['ip6tables', '-P', 'OUTPUT', 'ACCEPT'])
+    subprocess.call(['iptables', '-P', 'OUTPUT', 'ACCEPT'])
+    subprocess.call(['ip6tables', '-P', 'OUTPUT', 'ACCEPT'])
 
     # Drop forwarding by default
-    subprocess.run(['iptables', '-P', 'FORWARD', 'DROP'])
-    subprocess.run(['ip6tables', '-P', 'FORWARD', 'DROP'])
+    subprocess.call(['iptables', '-P', 'FORWARD', 'DROP'])
+    subprocess.call(['ip6tables', '-P', 'FORWARD', 'DROP'])
 
     # Save rules
-    subprocess.run(['iptables-save']) > '/etc/iptables/rules.v4'
-    subprocess.run(['ip6tables-save']) > '/etc/iptables/rules.v6'
+    with open('/etc/iptables/rules.v4', "w") as opened_file:
+        subprocess.call(['iptables-save'], stdout=opened_file)
+
+    with open('/etc/iptables/rules.v6', "w") as opened_file:
+        subprocess.call(['ip6tables-save'], stdout=opened_file)
 
 
 def iptables_allow_forwarding():
