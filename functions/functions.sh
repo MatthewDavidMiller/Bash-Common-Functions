@@ -125,3 +125,16 @@ function configure_ddclient() {
     grep -q -E ".*password=${password}" '/etc/ddclient.conf' && sed -i -E "s,.*password=.*,password=${password}," '/etc/ddclient.conf' || printf '%s\n' "password=${password}" >>'/etc/ddclient.conf'
     grep -q -E ".*${domain_name}" '/etc/ddclient.conf' || printf '%s\n' "${domain_name}" >>'/etc/ddclient.conf'
 }
+
+function apt_clear_cache() {
+    apt-get clean
+}
+
+function set_root_password() {
+    echo 'Set root password'
+    passwd root
+}
+
+function list_partitions() {
+    lsblk -f
+}

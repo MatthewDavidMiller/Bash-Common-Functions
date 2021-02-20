@@ -291,3 +291,16 @@ def configure_ddclient(domain_name):
                 break
         else:
             opened_file.write(domain_replace + '\n')
+
+
+def list_partitions():
+    subprocess.call([r'lsblk', r'-f'])
+
+
+def apt_clear_cache():
+    subprocess.call([r'apt-get', r'clean'])
+
+
+def set_password():
+    print(r'Set root password: ')
+    subprocess.call([r'passwd', r'root'])
