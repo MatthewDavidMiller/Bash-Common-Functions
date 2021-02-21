@@ -3,10 +3,15 @@
 # Eric Wilson, https://stackoverflow.com/questions/6711567/how-to-use-python-regex-to-replace-using-captured-group
 # Hari Menon, https://stackoverflow.com/questions/19243020/in-python-get-the-output-of-system-command-as-a-string
 # https://www.tutorialspoint.com/python/os_symlink.htm
+# https://www.tutorialspoint.com/python/os_chown.htm
+# https://www.geeksforgeeks.org/pwd-module-in-python/
+# https://stackoverflow.com/questions/33386553/python-chown-folder-by-username
+# https://www.geeksforgeeks.org/python-os-getlogin-method/
 
 import subprocess
 import os
 import re
+import pwd
 
 
 def lock_root():
@@ -15,7 +20,7 @@ def lock_root():
 
 def get_username():
     global user_name
-    user_name = subprocess.call(['logname'])
+    user_name = os.getlogin()
 
 
 def get_interface_name():
@@ -144,7 +149,9 @@ def create_user(user_name):
     print(r'Set the password for ' + user_name)
     subprocess.call(['passwd', user_name])
     os.mkdir(r'/home/' + user_name)
-    subprocess.call(['chown', user_name, r'/home/' + user_name])
+    uid = pwd.getpwnam(user_name).pw_uid
+    gid = pwd.getpwnam(user_name).pw_gid
+    os.chown(r'/home/' + uid, gid)
 
 
 def allow_user_group_sudo(name):
