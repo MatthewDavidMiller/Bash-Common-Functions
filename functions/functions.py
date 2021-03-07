@@ -12,6 +12,8 @@ import subprocess
 import os
 import re
 import pwd
+import stat
+import urllib.request
 
 
 def lock_root():
@@ -311,3 +313,18 @@ def apt_clear_cache():
 def set_password():
     print(r'Set root password: ')
     subprocess.call([r'passwd', r'root'])
+
+
+def setup_config_backups():
+    # Script to archive config files for backup
+    urllib.request.urlretrieve(
+        r'https://raw.githubusercontent.com/MatthewDavidMiller/scripts/stable/linux_scripts/backup_configs.sh', r'/usr/local/bin/backup_configs.sh')
+    os.chmod(r'/usr/local/bin/backup_configs.sh',
+             stat.S_IRUSR + stat.S_IXUSR)
+
+    # Configure cron jobs
+    cron_jobs_text = r'* 0 * * 1 bash /usr/local/bin/backup_configs.sh &'
+    with open(r'jobs.cron', "w") as opened_file:
+        opened_file.write(cron_jobs_text + '\n')
+    subprocess.call([r'crontab', r'jobs.cron'])
+    os.remove(r'jobs.cron')
