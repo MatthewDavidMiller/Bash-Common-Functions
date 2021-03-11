@@ -11,24 +11,13 @@
 import re
 
 
-def apt_configure_auto_updates(release_name, origin_name):
+def apt_configure_auto_update_origin(release_name, origin_name):
 
     update_regex = str(r'Unattended-Upgrade::Origins-Pattern {' + '.*' + r'};')
 
     update_replace = str(r'Unattended-Upgrade::Origins-Pattern {' + '\n' + r'"origin=' + origin_name + r',n=' + release_name + r',l = Debian";' + '\n' +
                          r'"origin=' + origin_name + r',n=' + release_name + r',l = Debian-Security";' '\n' r'"origin=' + origin_name + r',n=' +
                          release_name + r'-updates";' + '\n' + r'};')
-
-    reboot_regex = str('.*' + r'Unattended-Upgrade::Automatic-Reboot' + '.*')
-
-    reboot_replace = str(
-        r'Unattended-Upgrade::Automatic-Reboot "true";')
-
-    reboot_time_regex = str(
-        '.*' + r'Unattended-Upgrade::Automatic-Reboot-Time' + '.*')
-
-    reboot_time_replace = str(
-        r'Unattended-Upgrade::Automatic-Reboot-Time "04:00";')
 
     # Enable autoupdates
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "r") as opened_file:
@@ -43,6 +32,19 @@ def apt_configure_auto_updates(release_name, origin_name):
                 break
         else:
             opened_file.write(update_replace + '\n')
+
+
+def apt_configure_auto_update_reboot():
+    reboot_regex = str('.*' + r'Unattended-Upgrade::Automatic-Reboot' + '.*')
+
+    reboot_replace = str(
+        r'Unattended-Upgrade::Automatic-Reboot "true";')
+
+    reboot_time_regex = str(
+        '.*' + r'Unattended-Upgrade::Automatic-Reboot-Time' + '.*')
+
+    reboot_time_replace = str(
+        r'Unattended-Upgrade::Automatic-Reboot-Time "04:00";')
 
     # Allow reboots
     with open('/etc/apt/apt.conf.d/50unattended-upgrades', "r") as opened_file:
