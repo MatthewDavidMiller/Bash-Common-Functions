@@ -186,7 +186,7 @@ def set_shell_bash(user_name):
 
 def get_linux_headers():
     global linux_headers
-    linux_headers = r'linux-headers-' + subprocess.getoutput(['uname', '-r'])
+    linux_headers = r'linux-headers-' + subprocess.getoutput(r'uname -r')
 
 
 def add_backports_repository(release_name):
