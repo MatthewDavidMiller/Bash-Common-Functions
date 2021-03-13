@@ -22,8 +22,7 @@ def generate_ssh_key(user_name, ecdsa_response, rsa_response, dropbear_response,
                          r'/' + key_name, '-t', 'rsa', '-b', '4096'])
 
     # Authorize the key for use with ssh
-    subprocess.call(['iptables', '-P', 'INPUT', 'DROP'])
-    os.mkdir(r'/home/' + user_name + r'/.ssh')
+    os.makedirs(r'/home/' + user_name + r'/.ssh', exist_ok=True)
     subprocess.call(['chmod', '700', r'/home/' + user_name + r'/.ssh'])
     subprocess.call(['chmod', '600', r'/home/' +
                      user_name + r'/.ssh/authorized_keys'])
