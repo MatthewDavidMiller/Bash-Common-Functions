@@ -7,9 +7,9 @@ import subprocess
 
 def configure_network(ip_address, network_address, subnet_mask, gateway_address, dns_address, interface, ipv6_link_local_address):
 
-    auto_interface_regex = str('.*' + r'auto' + interface + '.*')
+    auto_interface_regex = str('.*' + r'auto ' + interface + '.*')
 
-    auto_interface_replace = str(r'auto' + interface)
+    auto_interface_replace = str(r'auto ' + interface)
 
     interface_static_regex = str(
         '.*' + r'iface ' + interface + r' inet dhcp' '.*')

@@ -7,6 +7,7 @@
 # https://www.geeksforgeeks.org/pwd-module-in-python/
 # https://stackoverflow.com/questions/33386553/python-chown-folder-by-username
 # https://www.geeksforgeeks.org/python-os-getlogin-method/
+# https://pythonexamples.org/python-loop-list-items/#4
 
 import subprocess
 import os
@@ -40,7 +41,8 @@ def fix_apt_packages():
 def install_packages(packages):
     subprocess.call([r'apt-get', r'update'])
     subprocess.call([r'apt-get', r'upgrade', '-y'])
-    subprocess.call([r'apt-get', 'install', '-y', packages])
+    for x in packages:
+        subprocess.call([r'apt-get', 'install', '-y', x])
 
 
 def get_ipv6_link_local_address():
