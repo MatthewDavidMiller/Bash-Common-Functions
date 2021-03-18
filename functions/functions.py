@@ -330,3 +330,15 @@ def setup_config_backups():
         opened_file.write(cron_jobs_text + '\n')
     subprocess.call([r'crontab', r'jobs.cron'])
     os.remove(r'jobs.cron')
+
+
+def configure_dropbear(key_name):
+    # Dropbear setup
+    with open(r'/home/' + user_name + r'/' + key_name + r'.pub', "r") as opened_file:
+        lines = opened_file.readlines()
+
+    with open(r'/home/' + user_name + r'/etc/dropbear/authorized_keys', "w") as opened_file:
+        opened_file.write(lines + '\n')
+
+    subprocess.call(['chmod', '0700', r'/etc/dropbear'])
+    subprocess.call(['chmod', '0600', r'/etc/dropbear/authorized_keys'])
