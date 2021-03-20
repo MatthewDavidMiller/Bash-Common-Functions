@@ -9,7 +9,8 @@ import os
 
 def generate_ssh_key(user_name, key_name):
     # Generate key
-    subprocess.call([r'ssh-keygen', r'-f', r'/home/' + user_name + r'/' + key_name, r'-t', r'ed25519'])
+    subprocess.call([r'ssh-keygen', r'-f', r'/home/' +
+                    user_name + r'/' + key_name, r'-t', r'ed25519'])
 
     # Authorize the key for use with ssh
     os.makedirs(r'/home/' + user_name + r'/.ssh', exist_ok=True)
@@ -25,7 +26,7 @@ def generate_ssh_key(user_name, key_name):
 
     subprocess.call(['chown', '-R', user_name, r'/home/' + user_name])
     subprocess.call(['python', '-m', 'SimpleHTTPServer', '40080', '&'])
-    server_pid = subprocess.call(['$!'])
+    server_pid = subprocess.getoutput(([r'$!']), stdout=subprocess.PIPE)
     print(r'Copy the key from the webserver on port 40080 before continuing: ')
     input()
     subprocess.call(['kill', server_pid])

@@ -8,6 +8,7 @@
 # https://stackoverflow.com/questions/33386553/python-chown-folder-by-username
 # https://www.geeksforgeeks.org/python-os-getlogin-method/
 # https://pythonexamples.org/python-loop-list-items/#4
+# https://computingforgeeks.com/generate-linux-user-encrypted-password-for-ansible/
 
 import subprocess
 import os
@@ -15,6 +16,8 @@ import re
 import pwd
 import stat
 import urllib.request
+import crypt
+import getpass
 
 
 def lock_root():
@@ -342,3 +345,8 @@ def configure_dropbear(key_name):
 
     subprocess.call(['chmod', '0700', r'/etc/dropbear'])
     subprocess.call(['chmod', '0600', r'/etc/dropbear/authorized_keys'])
+
+
+def encrypt_password():
+    pw = getpass.getpass()
+    print(crypt.crypt(pw))
